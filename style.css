@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Classes dinâmicas de estado */
+.status-low {
+    background-color: #f0fdf4;
+    border-color: #22c55e;
+    color: #14532d;
+}
+
+.status-moderate {
+    background-color: #fefce8;
+    border-color: #eab308;
+    color: #713f12;
+}
+
+.status-high {
+    background-color: #fef2f2;
+    border-color: #ef4444;
+    color: #7f1d1d;
+}
+
+/* Animações de Alerta */
+@keyframes flashRed {
+    0%, 100% { background-color: #fee2e2; border-color: #ef4444; }
+    50% { background-color: #fca5a5; border-color: #dc2626; }
+}
+
+.animate-flashRed {
+    animation: flashRed 0.8s infinite ease-in-out;
+}
+
+.alert-card-glow {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar-inner {
+    transition: width 0.08s ease-out, background-color 0.3s ease;
+}

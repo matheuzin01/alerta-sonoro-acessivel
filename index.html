@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerta Sonoro Acessível - Tecnologia Assistiva</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between p-4 sm:p-6 lg:p-8">
+
+    <header class="max-w-4xl mx-auto w-full text-center my-4">
+        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 flex items-center justify-center gap-3">
+            <span class="text-4xl sm:text-6xl" aria-hidden="true">🔊</span>
+            <span>Alerta Sonoro Acessível</span>
+        </h1>
+        <p class="mt-3 text-lg sm:text-xl font-medium text-slate-600 max-w-2xl mx-auto">
+            Transformando sons do ambiente em alertas visuais instantâneos para acessibilidade.
+        </p>
+    </header>
+
+    <main class="max-w-4xl mx-auto w-full flex-grow flex flex-col gap-6 my-2">
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center flex flex-col items-center justify-center gap-4">
+            <div class="flex flex-wrap items-center justify-center gap-4 w-full">
+                <button id="btnToggleMic" onclick="toggleMicrophone()" 
+                    class="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-xl rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3 cursor-pointer">
+                    <span id="micIcon" class="text-2xl">🎤</span>
+                    <span id="btnText">Ativar Microfone</span>
+                </button>
+
+                <button id="btnCalibrate" onclick="recalibrateNoise()" disabled 
+                    class="w-full sm:w-auto px-6 py-4 bg-slate-200 text-slate-400 font-semibold text-base rounded-xl cursor-not-allowed transition-all flex items-center justify-center gap-2">
+                    <span>⚙️</span>
+                    <span>Recalibrar Ruído</span>
+                </button>
+            </div>
+
+            <div id="micStatus" class="text-sm font-medium text-slate-500 flex items-center gap-2">
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-slate-400" id="statusDot"></span>
+                <span id="statusText">Microfone desligado. Clique no botão acima para iniciar.</span>
+            </div>
+            
+            <p class="text-xs text-slate-400 italic">
+                🔒 <strong>Privacidade:</strong> Este sistema analisa apenas a intensidade do áudio em tempo real. Nenhum áudio é gravado ou enviado para servidores.
+            </p>
+        </section>
+
+        <section id="alertBox" class="rounded-3xl p-8 sm:p-10 border-4 text-center transition-all duration-300 alert-card-glow bg-slate-100 border-slate-300">
+            <div class="flex flex-col items-center justify-center gap-4">
+                <div id="alertEmoji" class="text-7xl sm:text-9xl transition-transform transform duration-300 select-none">
+                    😴
+                </div>
+                <h2 id="alertTitle" class="text-3xl sm:text-5xl font-black uppercase tracking-wide">
+                    Aguardando Sinal
+                </h2>
+                <p id="alertDescription" class="text-lg sm:text-2xl font-medium max-w-xl">
+                    Ligue o microfone para que o sistema comece a monitorar o barulho do ambiente.
+                </p>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col gap-6">
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-base sm:text-lg font-bold text-slate-700 flex items-center gap-2">
+                        <span>🔊</span> Intensidade do Som
+                    </span>
+                    <span id="volumeNumber" class="text-xl sm:text-2xl font-extrabold text-indigo-600 font-mono">
+                        0 / 100
+                    </span>
+                </div>
+
+                <div class="w-full bg-slate-200 rounded-full h-8 p-1 overflow-hidden shadow-inner">
+                    <div id="progressBar" class="progress-bar-inner h-full rounded-full bg-emerald-500 w-0"></div>
+                </div>
+            </div>
+
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                        Forma de Onda (Tempo Real)
+                    </label>
+                    <span id="noiseFloorText" class="text-xs font-semibold text-slate-400">
+                        Piso de ruído: --
+                    </span>
+                </div>
+                <canvas id="waveformCanvas" class="w-full h-20 bg-slate-900 rounded-xl shadow-inner"></canvas>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <span>💡</span> Como Funciona este projeto?
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex flex-col gap-2">
+                    <span class="text-2xl">🎤</span>
+                    <h4 class="font-bold text-slate-700">Captura em Tempo Real</h4>
+                    <p class="text-slate-600">O microfone do notebook capta as vibrações sonoras do ambiente.</p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex flex-col gap-2">
+                    <span class="text-2xl">💻</span>
+                    <h4 class="font-bold text-slate-700">Web Audio API</h4>
+                    <p class="text-slate-600">O JavaScript calcula a intensidade (Volume RMS) instantaneamente sem salvar dados.</p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex flex-col gap-2">
+                    <span class="text-2xl">🟢🟡🔴</span>
+                    <h4 class="font-bold text-slate-700">Alertas Visuais</h4>
+                    <p class="text-slate-600">A intensidade é traduzida em cores, emojis e mensagens de fácil compreensão.</p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex flex-col gap-2">
+                    <span class="text-2xl">♿</span>
+                    <h4 class="font-bold text-slate-700">Inclusão e Acessibilidade</h4>
+                    <p class="text-slate-600">Auxilia pessoas com deficiência auditiva a perceberem ruídos fortes e alertas sonoros.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="max-w-4xl mx-auto w-full text-center py-6 text-xs sm:text-sm text-slate-500 border-t border-slate-200 mt-6">
+        <p>Projeto Escolar de Tecnologia Assistiva e Acessibilidade — Desenvolvido para apresentação em sala de aula.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
